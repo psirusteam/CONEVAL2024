@@ -1,0 +1,224 @@
+# 12_Imputacion_censal.R{-}
+
+Para la ejecución del presente análisis, se debe abrir el archivo **12_Imputacion_censal.R** disponible en la ruta **Rcodes/2020/12_Imputacion_censal.R**.
+
+Este script en R se centra en el análisis y la predicción de datos utilizando modelos estadísticos ajustados a encuestas y censos. Primero, se limpia el entorno de trabajo y se cargan diversas librerías necesarias para el análisis. Luego, se leen modelos previamente ajustados (`fit_ingreso`, `fit_alimento`, `fit_salud`) y datos de encuestas y líneas de bienestar. Se realiza una combinación de datos entre las encuestas y predictores de nivel estatal, y se calculan predicciones basadas en estos modelos. Los resultados de estas predicciones se almacenan en un archivo RDS para su posterior análisis.
+
+El script también incluye un paso para ajustar y validar los datos de la encuesta ampliada mediante simulaciones de variables predictoras y el cálculo de medidas de desviación estándar residual. Posteriormente, se lleva a cabo un proceso iterativo para generar nuevas predicciones y comparar estas predicciones con las originales. Finalmente, el script prepara los datos para un análisis posterior al actualizar las variables con valores simulados basados en las predicciones y desviaciones calculadas. Este proceso permite validar y ajustar los modelos utilizados, asegurando la precisión de las predicciones en la encuesta ampliada.
+
+
+#### Limpieza del Entorno y Carga de Bibliotecas{-}
+
+Primero, se limpia el entorno de trabajo para evitar cualquier interferencia de datos o variables residuales. Esto se hace utilizando `rm(list = ls())`, que elimina todos los objetos del espacio de trabajo en R. Esta acción asegura que el análisis se realice en un entorno limpio y libre de residuos de sesiones anteriores.
+
+Luego, se cargan las bibliotecas necesarias para el análisis. Se utiliza **`tidyverse`** para la manipulación y visualización de datos, que incluye paquetes como `ggplot2`, `dplyr`, y `tidyr`. **`data.table`** se usa para la manipulación eficiente de grandes conjuntos de datos. La biblioteca **`openxlsx`** permite leer y escribir archivos de Excel, mientras que **`magrittr`** proporciona el operador `%>%` para encadenar operaciones de manera fluida. Se carga **`haven`** para importar datos desde formatos de Stata, SPSS y SAS, y **`labelled`** para manejar variables con etiquetas, lo que facilita la interpretación de datos etiquetados. **`sampling`** es útil para procedimientos de muestreo y selección de muestras, mientras que **`lme4`** se utiliza para ajustar modelos lineales y no lineales mixtos. Finalmente, **`survey`** y **`srvyr`** son empleadas para el análisis de datos de encuestas complejas y para manipular estos datos en el contexto de `dplyr`.
+
+Para asegurar que la consola esté limpia y el entorno de trabajo esté listo para el análisis, se utiliza `cat("\f")`, que borra cualquier salida previa en la consola.
+
+Finalmente, se cargan funciones personalizadas desde un archivo de script R utilizando `source("../source/benchmarking_indicador.R")`. Este paso garantiza que las funciones necesarias para el análisis de indicadores de benchmarking estén disponibles y listas para su uso.
+
+
+``` r
+rm(list = ls())
+library(tidyverse)
+library(data.table)
+library(openxlsx)
+library(magrittr)
+library(haven)
+library(labelled)
+library(sampling)
+library(lme4)
+library(survey)
+library(srvyr)
+cat("\f")
+source("../source/benchmarking_indicador.R")
+```
+
+#### Carga de Modelos y Datos{-}
+
+En la sección se procede a leer los modelos ajustados previamente para los indicadores de ingresos, alimentación y salud. Esta etapa es crucial para el análisis posterior, ya que permite acceder a los modelos ya entrenados y preparados para realizar validaciones o nuevos cálculos.
+
+Primero, se cargan los modelos ajustados para el indicador de ingresos. El archivo `fit_mrp_ictpc.rds` contiene el modelo para el Índice de Condiciones de Vida (ICTPC), y se extrae el objeto `fit_mrp` del archivo usando `readRDS`.
+
+Luego, se realiza una operación similar para el modelo de alimentación. El archivo `fit_mrp_ic_ali_nc.rds` incluye el modelo correspondiente al Índice de Condiciones de Alimentación y Nutrición (IC-ALI-NC). De nuevo, se extrae el objeto `fit_mrp` del archivo cargado.
+
+Finalmente, se carga el modelo para el indicador de seguridad social, que se encuentra en el archivo `fit_mrp_ic_segsoc.rds`. Se sigue el mismo proceso de extracción del objeto `fit_mrp`.
+
+
+
+``` r
+fit_ingreso <- readRDS("../output/2020/modelos/fit_mrp_ictpc.rds")$fit_mrp
+fit_alimento <- readRDS("../output/2020/modelos/fit_mrp_ic_ali_nc.rds")$fit_mrp
+fit_salud <- readRDS("../output/2020/modelos/fit_mrp_ic_segsoc.rds")$fit_mrp
+```
+
+#### Carga de Datos{-}
+
+En esta sección, se cargan los datos esenciales necesarios para el análisis de bienestar y pobreza. Primero, se lee la encuesta `ENIGH` del archivo `encuesta_sta.rds`, la cual se actualiza con una columna adicional llamada `ingreso`, que se define a partir del índice de condiciones de vida (ICTPC).
+
+A continuación, se importan las líneas de bienestar desde un archivo CSV llamado `Lineas_Bienestar.csv`. Este archivo contiene información relevante sobre las líneas de bienestar, y los datos se procesan para asegurarse de que la columna `area` sea de tipo carácter.
+
+Se procede a cargar los predictores a nivel estatal desde el archivo `statelevel_predictors_df.rds`, que incluye variables a nivel de estado que se usarán en el análisis.
+
+Finalmente, se lee una muestra ampliada del censo desde el archivo `encuesta_ampliada.rds`. Este conjunto de datos se une con los predictores estatales y las líneas de bienestar para enriquecer el dataset y asegurar que toda la información relevante esté disponible para el análisis.
+
+
+``` r
+encuesta_enigh <- readRDS("../input/2020/enigh/encuesta_sta.rds") %>%
+  mutate(ingreso = ictpc)
+
+# lineas de bienestar 
+
+LB <- read.delim(
+  "input/2020/Lineas_Bienestar.csv",
+  header = TRUE,
+  sep = ";",
+  dec = ","
+) %>% mutate(area = as.character(area))
+
+statelevel_predictors <- readRDS("../input/2020/predictores/statelevel_predictors_df.rds")
+
+###############################################################
+# Lectura del muestras intercensal o  muestra_ampliada del censo
+###############################################################
+
+muestra_ampliada <- readRDS("../output/2020/encuesta_ampliada.rds")
+col_names_muestra <- names(muestra_ampliada)
+
+muestra_ampliada <-  inner_join(muestra_ampliada, statelevel_predictors)
+muestra_ampliada <- muestra_ampliada %>% inner_join(LB)
+```
+
+#### Predicción y Evaluación{-}
+
+Se realizan predicciones utilizando los modelos ajustados previamente para evaluar diferentes indicadores de bienestar social. Primero, se emplea el modelo para ingresos, cargado previamente en `fit_ingreso`, para generar predicciones sobre la muestra ampliada. Estas predicciones se obtienen mediante la función `predict`, especificando el nuevo conjunto de datos (`muestra_ampliada`) y el tipo de respuesta esperado.
+
+De manera similar, se aplican los modelos para los indicadores de alimentación (`fit_alimento`) y para seguridad social (`fit_salud`) en la misma muestra ampliada. Al usar `allow.new.levels = TRUE`, se asegura que las predicciones puedan realizarse incluso para niveles no presentes en los datos de entrenamiento, lo que permite una evaluación más completa y precisa sobre el conjunto de datos actual.
+
+
+``` r
+pred_ingreso <- predict(fit_ingreso, 
+                        newdata = muestra_ampliada,
+                        allow.new.levels = TRUE, 
+                        type = "response")
+
+pred_ic_ali_nc <- predict(fit_alimento, 
+                        newdata = muestra_ampliada,
+                        allow.new.levels = TRUE, 
+                        type = "response")
+
+pred_segsoc <- predict(fit_salud, 
+                        newdata = muestra_ampliada,
+                       allow.new.levels = TRUE, 
+                       type = "response")
+```
+
+#### Cálculo de la Desviación Estándar Residual para el Modelo de Ingreso{-}
+
+Se calcula la desviación estándar residual para el modelo de ingresos ajustado para evaluar la precisión de las predicciones. Primero, se agrega la variable de predicción `pred_ingreso` al conjunto de datos `encuesta_enigh`. Luego, se define un diseño de encuesta utilizando la función `svydesign` del paquete `survey`, que incluye información sobre el diseño muestral, como los identificadores de unidades primarias de muestreo (UPM), los estratos y los pesos.
+
+A continuación, se agrupan los datos por el nivel municipal (`cve_mun`) para calcular la media observada y la media predicha de los ingresos. La desviación estándar residual se obtiene al calcular la raíz cuadrada de la media de las diferencias cuadráticas entre las medias observadas y las predicciones. Finalmente, se compara la desviación estándar calculada con la desviación estándar del error residual del modelo (`sigma(fit_ingreso)`), y se toma el valor mínimo de ambos para una evaluación más robusta.
+
+
+``` r
+paso <- encuesta_enigh %>% mutate(pred_ingreso = pred_ingreso) %>%
+  survey::svydesign(
+    id =  ~ upm ,
+    strata = ~ estrato ,
+    data = .,
+    weights = ~ fep
+  ) %>%
+  as_survey_design()
+
+sd_1 <- paso %>% group_by(cve_mun) %>%
+  summarise(media_obs = survey_mean(ingreso),
+            media_pred = survey_mean(pred_ingreso)) %>%
+  summarise(media_sd = sqrt(mean(c(
+    media_obs - media_pred
+  ) ^ 2)))
+
+desv_estandar_residual <-
+  min(c(as.numeric(sd_1), sigma(fit_ingreso)))
+```
+
+#### Cálculo del Índice de Pobreza Multidimensional (IPM){-}
+
+Para calcular el Índice de Pobreza Multidimensional (IPM), se utiliza una combinación de las predicciones de los modelos y los datos originales. Primero, se realiza una unión con los datos de las líneas de bienestar (`LB`). Luego, se crea una nueva variable llamada `tol_ic` que suma los indicadores de carencia. 
+
+Con la variable `tol_ic` calculada, se define el índice IPM mediante la función `case_when`. Esta función clasifica a la población en cuatro categorías:
+
+1. **Situación de pobreza (Categoría I)**: Se asigna a aquellos cuyo ingreso es menor que el umbral de pobreza (`lp`) y tienen al menos una carencia social (`tol_ic >= 1`).
+2. **Vulnerabilidad por carencias sociales (Categoría II)**: Se asigna a quienes tienen un ingreso igual o superior al umbral de pobreza pero presentan al menos una carencia social.
+3. **Vulnerabilidad por ingresos (Categoría III)**: Se asigna a quienes tienen un ingreso menor o igual al umbral de pobreza pero no presentan carencias sociales.
+4. **No pobre multidimensional y no vulnerable (Categoría IV)**: Se asigna a aquellos con ingresos igual o superior al umbral de pobreza y sin carencias sociales.
+
+
+
+``` r
+encuesta_enigh <- encuesta_enigh %>% inner_join(LB) %>% 
+   mutate(
+   tol_ic = ic_segsoc + ic_ali_nc + ic_asalud + ic_cv +  ic_sbv + ic_rezedu,
+   ipm   = case_when(
+     # Población en situación de pobreza.
+     ingreso < lp & tol_ic >= 1 ~ "I",
+     # Población vulnerable por carencias sociales.
+     ingreso >= lp & tol_ic >= 1 ~ "II",
+     # Poblacion vulnerable por ingresos.
+     ingreso <= lp & tol_ic < 1 ~ "III",
+     # Población no pobre multidimensional y no vulnerable.
+     ingreso >= lp & tol_ic < 1 ~ "IV"
+     )
+   )
+```
+
+#### Predicción Final y Almacenamiento:{-}
+
+Para completar el análisis, se realiza una predicción final utilizando los modelos ajustados sobre la muestra ampliada. Esto incluye la predicción para los modelos de ingreso, alimentación y seguridad social (`pred_ingreso`, `pred_ic_ali_nc`, y `pred_segsoc`, respectivamente). 
+
+Además, se calcula la desviación estándar residual (`desv_estandar_residual`) para el modelo de ingreso, que se usa para ajustar y validar el modelo.
+
+Finalmente, se guarda un archivo en formato RDS con todas las predicciones y la desviación estándar residual calculada. Este archivo se almacena en la ruta especificada: `"../output/2020/modelos/predicciones.rds"`. Este archivo facilitará el acceso a los resultados para futuras etapas del análisis o para reportes posteriores.
+
+
+``` r
+saveRDS(list(pred_ingreso = pred_ingreso, 
+          pred_ic_ali_nc = pred_ic_ali_nc, 
+          pred_segsoc = pred_segsoc, 
+          desv_estandar_residual = desv_estandar_residual),
+     file =  "../output/2020/modelos/predicciones.rds")
+```
+
+#### Ajuste y Validación de las Predicciones en la Muestra Ampliada{-}
+
+Una vez realizadas las predicciones con los modelos ajustados, se procede a ajustar los valores en la muestra ampliada utilizando las predicciones obtenidas. Para cada observación en la muestra ampliada, se ajustan las variables relacionadas con las carencias y el ingreso:
+
+1. **Ajuste de las Carencias**: Las variables de carencia (`ic_segsoc` e `ic_ali_nc`) se generan utilizando la función `rbinom`, que permite modelar estas variables como variables binomiales con probabilidades dadas por las predicciones (`pred_segsoc` y `pred_ic_ali_nc`).
+
+2. **Ajuste del Ingreso**: El ingreso se ajusta sumando a las predicciones de ingreso (`pred_ingreso`) un término de error normalmente distribuido con media cero y desviación estándar residual (`desv_estandar_residual`).
+
+3. **Cálculo de la Variable `tol_ic`**: Se calcula la suma de todas las carencias para obtener `tol_ic`.
+
+Finalmente, se valida la precisión de las predicciones comparando las medias de las variables ajustadas (`muestra_ampliada_pred`) con las medias de las predicciones originales (`pred_ic_ali_nc`, `pred_segsoc`, y `pred_ingreso`). La diferencia entre estas medias proporciona una indicación de la precisión de las predicciones.
+
+Este proceso asegura que las predicciones realizadas se ajusten adecuadamente a la muestra ampliada y permite evaluar la exactitud de las predicciones en el contexto de la muestra.
+
+
+``` r
+muestra_ampliada_pred <-
+  muestra_ampliada %>% 
+  select(all_of(col_names_muestra), li, lp) %>%
+  mutate(
+    ic_segsoc = rbinom(n = n(), size = 1, prob = pred_segsoc),
+    ic_ali_nc = rbinom(n = n(), size = 1, prob = pred_ic_ali_nc),
+    ingreso = pred_ingreso + rnorm(n = n(), mean = 0, desv_estandar_residual),
+    tol_ic = ic_segsoc + ic_ali_nc + ic_asalud + ic_cv +
+      ic_sbv + ic_rezedu
+  )
+# Validación de los predict 
+mean(muestra_ampliada_pred$ic_ali_nc) - mean(pred_ic_ali_nc)
+mean(muestra_ampliada_pred$ic_segsoc) - mean(pred_segsoc)
+mean(muestra_ampliada_pred$ingreso) - mean(pred_ingreso)
+```
+
+
+

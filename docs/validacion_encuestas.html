@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="es" xml:lang="es">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>05_Validacion_encuestas.R | Manual de procesamiento del indicador de pobreza multidimensional mediante el uso de estimación de áreas pequeñas para México 2020</title>
+  <meta name="description" content="Manual de procesamiento." />
+  <meta name="generator" content="bookdown 0.38 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="05_Validacion_encuestas.R | Manual de procesamiento del indicador de pobreza multidimensional mediante el uso de estimación de áreas pequeñas para México 2020" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="Manual de procesamiento." />
+  <meta name="github-repo" content="psirusteam/coneval" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="05_Validacion_encuestas.R | Manual de procesamiento del indicador de pobreza multidimensional mediante el uso de estimación de áreas pequeñas para México 2020" />
+  
+  <meta name="twitter:description" content="Manual de procesamiento." />
+  
+
+<meta name="author" content="Andrés Gutiérrez, Stalyn Guerrero" />
+
+
+<meta name="date" content="2024-07-31" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="armonizar_encuesta.html"/>
+<link rel="next" href="modelo_unidad_ictpc.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Manual de procesamiento.</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Introducción</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#respositodio-de-códigos"><i class="fa fa-check"></i>Respositodio de códigos</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#estructura-del-proyecto"><i class="fa fa-check"></i>Estructura del Proyecto</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#librerias-de-r-y-otros-insumos"><i class="fa fa-check"></i>Librerias de <em>R</em> y otros insumos</a></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#bases-de-datos-utilizadas"><i class="fa fa-check"></i>Bases de Datos Utilizadas</a></li>
+<li class="chapter" data-level="" data-path="indicadores-estimados.html"><a href="indicadores-estimados.html"><i class="fa fa-check"></i>Indicadores estimados</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="union_bases.html"><a href="union_bases.html"><i class="fa fa-check"></i>00_union_bases.R</a></li>
+<li class="chapter" data-level="" data-path="descarga_satelitales.html"><a href="descarga_satelitales.html"><i class="fa fa-check"></i>01_Descarga_satelitales.R</a></li>
+<li class="chapter" data-level="" data-path="union_predictores.html"><a href="union_predictores.html"><i class="fa fa-check"></i>02_Union_predictores.R</a></li>
+<li class="chapter" data-level="" data-path="estandarizar_muestra-cuestionario_ampliado.html"><a href="estandarizar_muestra-cuestionario_ampliado.html"><i class="fa fa-check"></i>03_Estandarizar_muestra cuestionario_ampliado.R</a></li>
+<li class="chapter" data-level="" data-path="armonizar_encuesta.html"><a href="armonizar_encuesta.html"><i class="fa fa-check"></i>04_Armonizar_encuesta.R</a></li>
+<li class="chapter" data-level="" data-path="validacion_encuestas.html"><a href="validacion_encuestas.html"><i class="fa fa-check"></i>05_Validacion_encuestas.R</a></li>
+<li class="chapter" data-level="" data-path="modelo_unidad_ictpc.html"><a href="modelo_unidad_ictpc.html"><i class="fa fa-check"></i>06_Modelo_unidad_ictpc.R</a></li>
+<li class="chapter" data-level="" data-path="modelo_unidad_py_ic_ali_nc.html"><a href="modelo_unidad_py_ic_ali_nc.html"><i class="fa fa-check"></i>07_Modelo_unidad_py_ic_ali_nc.R</a></li>
+<li class="chapter" data-level="" data-path="modelo_unidad_py_ic_segsoc.html"><a href="modelo_unidad_py_ic_segsoc.html"><i class="fa fa-check"></i>08_Modelo_unidad_py_ic_segsoc</a></li>
+<li class="chapter" data-level="" data-path="postbenchmarking_ictpc.html"><a href="postbenchmarking_ictpc.html"><i class="fa fa-check"></i>09_PostBenchmarking_ictpc.R</a></li>
+<li class="chapter" data-level="" data-path="postbenchmarking_ic_ali_nc.html"><a href="postbenchmarking_ic_ali_nc.html"><i class="fa fa-check"></i>10_PostBenchmarking_ic_ali_nc.R</a></li>
+<li class="chapter" data-level="" data-path="postbenchmarking_ic_segsoc.html"><a href="postbenchmarking_ic_segsoc.html"><i class="fa fa-check"></i>11_PostBenchmarking_ic_segsoc.r</a></li>
+<li class="chapter" data-level="" data-path="imputacion_censal.html"><a href="imputacion_censal.html"><i class="fa fa-check"></i>12_Imputacion_censal.R</a></li>
+<li class="chapter" data-level="" data-path="estimacion_ent_02.html"><a href="estimacion_ent_02.html"><i class="fa fa-check"></i>13_Estimacion_ent_02.R</a></li>
+<li class="chapter" data-level="" data-path="estimacion_municipios_ipm_pobreza.html"><a href="estimacion_municipios_ipm_pobreza.html"><i class="fa fa-check"></i>14_estimacion_municipios_ipm_pobreza.R</a></li>
+<li class="chapter" data-level="" data-path="estimacion_municipios_ipm_pobreza_error.html"><a href="estimacion_municipios_ipm_pobreza_error.html"><i class="fa fa-check"></i>15_estimacion_municipios_ipm_pobreza_error.R</a></li>
+<li class="chapter" data-level="" data-path="mapas.html"><a href="mapas.html"><i class="fa fa-check"></i>16_Mapas.R</a></li>
+<li class="chapter" data-level="" data-path="estimacion_municipios_carencias.html"><a href="estimacion_municipios_carencias.html"><i class="fa fa-check"></i>17_estimacion_municipios_carencias.R</a>
+<ul>
+<li class="chapter" data-level="0.0.1" data-path="estimacion_municipios_carencias.html"><a href="estimacion_municipios_carencias.html#descripción-general"><i class="fa fa-check"></i><b>0.0.1</b> Descripción General</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="estimacion_municipios_carencias_error.html"><a href="estimacion_municipios_carencias_error.html"><i class="fa fa-check"></i>18_estimacion_municipios_carencias_error.R</a></li>
+<li class="chapter" data-level="" data-path="mapas_carencias.html"><a href="mapas_carencias.html"><i class="fa fa-check"></i>19_Mapas_carencias.R</a></li>
+<li class="chapter" data-level="" data-path="estimacion_directa_carencias.html"><a href="estimacion_directa_carencias.html"><i class="fa fa-check"></i>20_estimacion_directa_carencias.R</a></li>
+<li class="divider"></li>
+<li><a Manual de procesamiento. </a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Manual de procesamiento del indicador de pobreza multidimensional mediante el uso de estimación de áreas pequeñas para México 2020</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="validacion_encuestas.r" class="section level1 unnumbered hasAnchor">
+<h1>05_Validacion_encuestas.R<a href="validacion_encuestas.html#validacion_encuestas.r" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>Para ejecutar este archivo, es necesario abrir el archivo <strong>05_Validacion_encuestas.R</strong> ubicado en la ruta <em>Rcodes/2020/05_Validacion_encuestas.R</em>. Este script está diseñado para llevar a cabo un análisis integral de datos con varias fases que aseguran una evaluación rigurosa de la información disponible.</p>
+<p>En la primera etapa del código, se eliminan todos los objetos del entorno de R para garantizar que el análisis se realice en un entorno limpio y sin interferencias. Luego, se cargan las librerías necesarias para llevar a cabo el análisis y se establece el tema de visualización predeterminado usando <code>bayesplot::theme_default()</code>. También se carga un archivo de script adicional que incluye funciones específicas para la creación de gráficos. Posteriormente, se leen las bases de datos <code>encuesta_sta</code> y <code>muestra_ampliada</code>, que contienen los datos de la encuesta y del censo, respectivamente.</p>
+<p>El análisis procede realizando comparaciones entre los datos censales y los datos de la encuesta en diferentes variables categóricas, tales como edad, sexo, nivel educativo y estado. Para cada una de estas variables, se generan gráficos que permiten visualizar las diferencias. Utilizando la librería <code>patchwork</code>, se combinan estos gráficos en un solo diseño para facilitar la comparación. Además, se llevan a cabo análisis adicionales en variables como lengua indígena y discapacidad, y se exploran las interacciones entre variables como sexo y edad, nivel educativo y sexo, y estado y sexo. Finalmente, los gráficos que ilustran estas interacciones se integran en un diseño consolidado para una visualización comprensiva de los efectos.</p>
+<div id="limpieza-del-entorno-y-carga-de-bibliotecas-2" class="section level4 unnumbered hasAnchor">
+<h4>Limpieza del Entorno y Carga de Bibliotecas<a href="validacion_encuestas.html#limpieza-del-entorno-y-carga-de-bibliotecas-2" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Se realiza una limpieza del entorno en R para eliminar todos los objetos y liberar memoria, asegurando que no haya interferencias de variables o datos previos en el análisis actual. Posteriormente, se cargan las bibliotecas necesarias para la manipulación de datos y la creación de gráficos. Entre las bibliotecas cargadas se encuentran <code>tidyverse</code> para la manipulación y visualización de datos, <code>reshape2</code> para la reorganización de datos, <code>stringr</code> para el manejo de cadenas de texto, <code>ggalt</code> para gráficos avanzados, <code>gridExtra</code> para la disposición de múltiples gráficos, <code>scales</code> para la adaptación de escalas en los gráficos, <code>formatR</code> para el formateo de código, y <code>patchwork</code> para combinar múltiples gráficos.</p>
+<p>Se establece un tema predeterminado para los gráficos mediante <code>bayesplot::theme_default()</code> para mantener una presentación visual consistente. Además, se carga un archivo de script adicional, <code>Plot_validacion.R</code>, que contiene funciones personalizadas para la validación de gráficos, permitiendo así una integración eficiente y consistente de las herramientas gráficas necesarias para el análisis.</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="validacion_encuestas.html#cb42-1" tabindex="-1"></a><span class="do">#### Cleaning R environment </span><span class="al">###</span></span>
+<span id="cb42-2"><a href="validacion_encuestas.html#cb42-2" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
+<span id="cb42-3"><a href="validacion_encuestas.html#cb42-3" tabindex="-1"></a></span>
+<span id="cb42-4"><a href="validacion_encuestas.html#cb42-4" tabindex="-1"></a><span class="do">#################</span></span>
+<span id="cb42-5"><a href="validacion_encuestas.html#cb42-5" tabindex="-1"></a><span class="do">#### Libraries </span><span class="al">###</span></span>
+<span id="cb42-6"><a href="validacion_encuestas.html#cb42-6" tabindex="-1"></a><span class="do">#################</span></span>
+<span id="cb42-7"><a href="validacion_encuestas.html#cb42-7" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb42-8"><a href="validacion_encuestas.html#cb42-8" tabindex="-1"></a><span class="fu">library</span>(reshape2)</span>
+<span id="cb42-9"><a href="validacion_encuestas.html#cb42-9" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb42-10"><a href="validacion_encuestas.html#cb42-10" tabindex="-1"></a><span class="fu">library</span>(ggalt)</span>
+<span id="cb42-11"><a href="validacion_encuestas.html#cb42-11" tabindex="-1"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb42-12"><a href="validacion_encuestas.html#cb42-12" tabindex="-1"></a><span class="fu">library</span>(scales)</span>
+<span id="cb42-13"><a href="validacion_encuestas.html#cb42-13" tabindex="-1"></a><span class="fu">library</span>(formatR)</span>
+<span id="cb42-14"><a href="validacion_encuestas.html#cb42-14" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb42-15"><a href="validacion_encuestas.html#cb42-15" tabindex="-1"></a></span>
+<span id="cb42-16"><a href="validacion_encuestas.html#cb42-16" tabindex="-1"></a><span class="fu">theme_set</span>(bayesplot<span class="sc">::</span><span class="fu">theme_default</span>())</span>
+<span id="cb42-17"><a href="validacion_encuestas.html#cb42-17" tabindex="-1"></a></span>
+<span id="cb42-18"><a href="validacion_encuestas.html#cb42-18" tabindex="-1"></a><span class="fu">source</span>(<span class="at">file =</span> <span class="st">&quot;../source/Plot_validacion.R&quot;</span>, <span class="at">encoding =</span> <span class="st">&quot;UTF-8&quot;</span>)</span></code></pre></div>
+</div>
+<div id="lectura-de-datos-1" class="section level4 unnumbered hasAnchor">
+<h4>Lectura de Datos<a href="validacion_encuestas.html#lectura-de-datos-1" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Se leen las bases de datos necesarias para el análisis. La primera base de datos, <code>encuesta_sta</code>, se carga desde el archivo <code>../input/2020/enigh/encuesta_sta.rds</code>, y la segunda, <code>muestra_ampliada</code>, se carga desde el archivo <code>../input/2020/muestra_ampliada/muestra_cuestionario_ampliado.rds</code>. Estos conjuntos de datos proporcionan la información requerida para las siguientes etapas del análisis.</p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="validacion_encuestas.html#cb43-1" tabindex="-1"></a>encuesta_sta <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../input/2020/enigh/encuesta_sta.rds&quot;</span>)</span>
+<span id="cb43-2"><a href="validacion_encuestas.html#cb43-2" tabindex="-1"></a>muestra_ampliada <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../input/2020/muestra_ampliada/muestra_cuestionario_ampliado.rds&quot;</span>)</span></code></pre></div>
+</div>
+<div id="comparación-de-variables" class="section level4 unnumbered hasAnchor">
+<h4>Comparación de Variables<a href="validacion_encuestas.html#comparación-de-variables" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Se comparan las distribuciones de diferentes variables entre los datos censales y los de la encuesta mediante la función <code>Plot_Compare</code>.</p>
+<p>Para analizar la variable <strong>edad</strong>, se crea el gráfico <code>age_plot</code>, que compara las distribuciones de edad en los datos censales y en los de la encuesta.</p>
+<p>Se genera el gráfico <code>sex_plot</code> para comparar las distribuciones de <strong>sexo</strong> entre ambas fuentes de datos.</p>
+<p>El gráfico <code>escolar_plot</code> se utiliza para comparar el <strong>nivel educativo</strong> en los datos censales con los datos de la encuesta.</p>
+<p>Finalmente, el gráfico <code>depto_plot</code> compara las distribuciones de <strong>entidad</strong> entre los datos censales y de la encuesta. Estos gráficos permiten evaluar las diferencias en las características de la población entre las dos fuentes de datos.</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="validacion_encuestas.html#cb44-1" tabindex="-1"></a><span class="do">#### AGE </span><span class="al">###</span></span>
+<span id="cb44-2"><a href="validacion_encuestas.html#cb44-2" tabindex="-1"></a>age_plot <span class="ot">&lt;-</span></span>
+<span id="cb44-3"><a href="validacion_encuestas.html#cb44-3" tabindex="-1"></a>  <span class="fu">Plot_Compare</span>(<span class="at">dat_censo =</span> muestra_ampliada,</span>
+<span id="cb44-4"><a href="validacion_encuestas.html#cb44-4" tabindex="-1"></a>               <span class="at">dat_encuesta =</span> encuesta_sta,</span>
+<span id="cb44-5"><a href="validacion_encuestas.html#cb44-5" tabindex="-1"></a>               <span class="at">by =</span> <span class="st">&quot;edad&quot;</span>)</span>
+<span id="cb44-6"><a href="validacion_encuestas.html#cb44-6" tabindex="-1"></a><span class="do">#### Sex </span><span class="al">###</span></span>
+<span id="cb44-7"><a href="validacion_encuestas.html#cb44-7" tabindex="-1"></a>sex_plot <span class="ot">&lt;-</span></span>
+<span id="cb44-8"><a href="validacion_encuestas.html#cb44-8" tabindex="-1"></a>  <span class="fu">Plot_Compare</span>(<span class="at">dat_censo =</span> muestra_ampliada,</span>
+<span id="cb44-9"><a href="validacion_encuestas.html#cb44-9" tabindex="-1"></a>               <span class="at">dat_encuesta =</span> encuesta_sta,</span>
+<span id="cb44-10"><a href="validacion_encuestas.html#cb44-10" tabindex="-1"></a>               <span class="at">by =</span> <span class="st">&quot;sexo&quot;</span>)</span>
+<span id="cb44-11"><a href="validacion_encuestas.html#cb44-11" tabindex="-1"></a><span class="do">#### Level of schooling (LoS) </span><span class="al">###</span></span>
+<span id="cb44-12"><a href="validacion_encuestas.html#cb44-12" tabindex="-1"></a>escolar_plot <span class="ot">&lt;-</span></span>
+<span id="cb44-13"><a href="validacion_encuestas.html#cb44-13" tabindex="-1"></a>  <span class="fu">Plot_Compare</span>(<span class="at">dat_censo =</span> muestra_ampliada,</span>
+<span id="cb44-14"><a href="validacion_encuestas.html#cb44-14" tabindex="-1"></a>               <span class="at">dat_encuesta =</span> encuesta_sta,</span>
+<span id="cb44-15"><a href="validacion_encuestas.html#cb44-15" tabindex="-1"></a>               <span class="at">by =</span> <span class="st">&quot;nivel_edu&quot;</span>)</span>
+<span id="cb44-16"><a href="validacion_encuestas.html#cb44-16" tabindex="-1"></a></span>
+<span id="cb44-17"><a href="validacion_encuestas.html#cb44-17" tabindex="-1"></a><span class="do">#### States </span><span class="al">###</span></span>
+<span id="cb44-18"><a href="validacion_encuestas.html#cb44-18" tabindex="-1"></a>depto_plot <span class="ot">&lt;-</span></span>
+<span id="cb44-19"><a href="validacion_encuestas.html#cb44-19" tabindex="-1"></a>  <span class="fu">Plot_Compare</span>(<span class="at">dat_censo =</span> muestra_ampliada,</span>
+<span id="cb44-20"><a href="validacion_encuestas.html#cb44-20" tabindex="-1"></a>               <span class="at">dat_encuesta =</span> encuesta_sta,</span>
+<span id="cb44-21"><a href="validacion_encuestas.html#cb44-21" tabindex="-1"></a>               <span class="at">by =</span> <span class="st">&quot;ent&quot;</span>)</span></code></pre></div>
+<p>Se crean gráficos comparativos para edad, sexo, nivel educativo y estados. Estos gráficos se combinan utilizando <code>patchwork</code>.</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="validacion_encuestas.html#cb45-1" tabindex="-1"></a><span class="co">#--- Patchwork en acción ---#</span></span>
+<span id="cb45-2"><a href="validacion_encuestas.html#cb45-2" tabindex="-1"></a>(age_plot <span class="sc">|</span> sex_plot <span class="sc">|</span> escolar_plot) <span class="sc">/</span> (depto_plot)</span></code></pre></div>
+</div>
+<div id="comparación-de-lengua-indígena-y-discapacidad" class="section level4 unnumbered hasAnchor">
+<h4>Comparación de Lengua Indígena y Discapacidad<a href="validacion_encuestas.html#comparación-de-lengua-indígena-y-discapacidad" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Para comparar las variables de <strong>lengua indígena</strong> y <strong>discapacidad</strong> entre los datos censales y los datos de la encuesta, se utilizan dos gráficos generados mediante la función <code>Plot_Compare</code>.</p>
+<p>El gráfico <code>hlengua</code> muestra la comparación de la distribución de la variable <strong>lengua indígena</strong> en los datos censales frente a los datos de la encuesta.</p>
+<p>Por otro lado, el gráfico <code>plot_discapacidad</code> compara la distribución de la variable <strong>discapacidad</strong> entre ambos conjuntos de datos.</p>
+<p>Ambos gráficos se visualizan conjuntamente usando el operador <code>|</code>, permitiendo una comparación lado a lado de estas dos variables.</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="validacion_encuestas.html#cb46-1" tabindex="-1"></a>hlengua <span class="ot">&lt;-</span> <span class="fu">Plot_Compare</span>(<span class="at">dat_censo =</span> muestra_ampliada,</span>
+<span id="cb46-2"><a href="validacion_encuestas.html#cb46-2" tabindex="-1"></a>               <span class="at">dat_encuesta =</span> encuesta_sta,</span>
+<span id="cb46-3"><a href="validacion_encuestas.html#cb46-3" tabindex="-1"></a>               <span class="at">by =</span> <span class="st">&quot;hlengua&quot;</span>)</span>
+<span id="cb46-4"><a href="validacion_encuestas.html#cb46-4" tabindex="-1"></a></span>
+<span id="cb46-5"><a href="validacion_encuestas.html#cb46-5" tabindex="-1"></a>plot_discapacidad <span class="ot">&lt;-</span> <span class="fu">Plot_Compare</span>(<span class="at">dat_censo =</span> muestra_ampliada,</span>
+<span id="cb46-6"><a href="validacion_encuestas.html#cb46-6" tabindex="-1"></a>             <span class="at">dat_encuesta =</span> encuesta_sta,</span>
+<span id="cb46-7"><a href="validacion_encuestas.html#cb46-7" tabindex="-1"></a>             <span class="at">by =</span> <span class="st">&quot;discapacidad&quot;</span>)</span>
+<span id="cb46-8"><a href="validacion_encuestas.html#cb46-8" tabindex="-1"></a></span>
+<span id="cb46-9"><a href="validacion_encuestas.html#cb46-9" tabindex="-1"></a>(plot_discapacidad <span class="sc">|</span> hlengua )</span></code></pre></div>
+</div>
+<div id="efectos-de-interacción" class="section level4 unnumbered hasAnchor">
+<h4>Efectos de Interacción<a href="validacion_encuestas.html#efectos-de-interacción" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Para analizar los efectos de interacción entre diferentes variables en los datos de la encuesta, se utiliza la función plot_interaction. A continuación, se presentan dos análisis específicos:</p>
+</div>
+<div id="interacción-edad-x-sexo" class="section level4 unnumbered hasAnchor">
+<h4>Interacción Edad x Sexo<a href="validacion_encuestas.html#interacción-edad-x-sexo" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Se examina cómo varía el porcentaje de personas en situación de pobreza en función de la combinación de las variables <strong>edad</strong> y <strong>sexo</strong>. El gráfico <code>p_sex_age</code> ilustra esta interacción, mostrando cómo la pobreza se distribuye entre diferentes grupos etarios y de sexo.</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="validacion_encuestas.html#cb47-1" tabindex="-1"></a><span class="do">#### AGE x SEX </span><span class="al">###</span></span>
+<span id="cb47-2"><a href="validacion_encuestas.html#cb47-2" tabindex="-1"></a>encuesta_sta<span class="sc">$</span>pobreza <span class="ot">&lt;-</span> encuesta_sta<span class="sc">$</span>ictpc</span>
+<span id="cb47-3"><a href="validacion_encuestas.html#cb47-3" tabindex="-1"></a><span class="co">#--- Percentage of people in poverty by AGE x SEX ---#</span></span>
+<span id="cb47-4"><a href="validacion_encuestas.html#cb47-4" tabindex="-1"></a>p_sex_age <span class="ot">&lt;-</span></span>
+<span id="cb47-5"><a href="validacion_encuestas.html#cb47-5" tabindex="-1"></a>  <span class="fu">plot_interaction</span>(<span class="at">dat_encuesta =</span> encuesta_sta,</span>
+<span id="cb47-6"><a href="validacion_encuestas.html#cb47-6" tabindex="-1"></a>                   <span class="at">by =</span> <span class="st">&quot;sexo&quot;</span>,</span>
+<span id="cb47-7"><a href="validacion_encuestas.html#cb47-7" tabindex="-1"></a>                   <span class="at">by2 =</span> <span class="st">&quot;edad&quot;</span>)</span></code></pre></div>
+</div>
+<div id="interacción-nivel-educativo-x-sexo" class="section level4 unnumbered hasAnchor">
+<h4>Interacción Nivel Educativo x Sexo<a href="validacion_encuestas.html#interacción-nivel-educativo-x-sexo" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Se investiga la relación entre <strong>nivel educativo</strong> y <strong>sexo</strong> en cuanto a su influencia en la pobreza. El gráfico <code>p_sex_escolar</code> representa esta interacción, proporcionando una visión de cómo el nivel educativo combinado con el sexo afecta las tasas de pobreza.</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="validacion_encuestas.html#cb48-1" tabindex="-1"></a><span class="do">#### Level of schooling (LoS) x SEX </span><span class="al">###</span></span>
+<span id="cb48-2"><a href="validacion_encuestas.html#cb48-2" tabindex="-1"></a>p_sex_escolar <span class="ot">&lt;-</span></span>
+<span id="cb48-3"><a href="validacion_encuestas.html#cb48-3" tabindex="-1"></a>  <span class="fu">plot_interaction</span>(<span class="at">dat_encuesta =</span> encuesta_sta,</span>
+<span id="cb48-4"><a href="validacion_encuestas.html#cb48-4" tabindex="-1"></a>                   <span class="at">by =</span> <span class="st">&quot;sexo&quot;</span>,</span>
+<span id="cb48-5"><a href="validacion_encuestas.html#cb48-5" tabindex="-1"></a>                   <span class="at">by2 =</span> <span class="st">&quot;nivel_edu&quot;</span>)</span></code></pre></div>
+</div>
+<div id="interacción-estado-x-sexo" class="section level4 unnumbered hasAnchor">
+<h4>Interacción Estado x Sexo<a href="validacion_encuestas.html#interacción-estado-x-sexo" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Este análisis explora cómo varía la pobreza en función del <strong>estado</strong> y el <strong>sexo</strong>. El gráfico <code>p_sex_depto</code> muestra la distribución de la pobreza entre diferentes estados y géneros, proporcionando una visión sobre cómo estas variables combinadas influyen en la pobreza.</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="validacion_encuestas.html#cb49-1" tabindex="-1"></a><span class="do">#### State x SEX </span><span class="al">###</span></span>
+<span id="cb49-2"><a href="validacion_encuestas.html#cb49-2" tabindex="-1"></a>p_sex_depto <span class="ot">&lt;-</span></span>
+<span id="cb49-3"><a href="validacion_encuestas.html#cb49-3" tabindex="-1"></a>  <span class="fu">plot_interaction</span>(<span class="at">dat_encuesta =</span> encuesta_sta,</span>
+<span id="cb49-4"><a href="validacion_encuestas.html#cb49-4" tabindex="-1"></a>                   <span class="at">by =</span> <span class="st">&quot;sexo&quot;</span>,</span>
+<span id="cb49-5"><a href="validacion_encuestas.html#cb49-5" tabindex="-1"></a>                   <span class="at">by2 =</span> <span class="st">&quot;ent&quot;</span>)</span></code></pre></div>
+<p>Se combinan los gráficos de interacción de <strong>Edad x Sexo</strong> y <strong>Nivel Educativo x Sexo</strong> utilizando la funcionalidad <code>patchwork</code>. Esto permite una visualización conjunta para comparar fácilmente las interacciones entre las diferentes combinaciones de variables.</p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="validacion_encuestas.html#cb50-1" tabindex="-1"></a><span class="co">#--- Patchwork in action ---#</span></span>
+<span id="cb50-2"><a href="validacion_encuestas.html#cb50-2" tabindex="-1"></a>(p_sex_age <span class="sc">+</span> p_sex_escolar) <span class="sc">/</span> p_sex_depto</span></code></pre></div>
+</div>
+<div id="interacción-nivel-educativo-x-edad" class="section level4 unnumbered hasAnchor">
+<h4>Interacción Nivel Educativo x Edad<a href="validacion_encuestas.html#interacción-nivel-educativo-x-edad" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Se analiza cómo el <strong>nivel educativo</strong> y la <strong>edad</strong> interactúan en relación con la pobreza. El gráfico <code>p_escolar_edad</code> muestra cómo varía el nivel educativo entre diferentes grupos etarios y se ajusta el tema para colocar la leyenda en la parte inferior.</p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="validacion_encuestas.html#cb51-1" tabindex="-1"></a><span class="do">#### Level of schooling (LoS) x AGE </span><span class="al">###</span></span>
+<span id="cb51-2"><a href="validacion_encuestas.html#cb51-2" tabindex="-1"></a>p_escolar_edad <span class="ot">&lt;-</span></span>
+<span id="cb51-3"><a href="validacion_encuestas.html#cb51-3" tabindex="-1"></a>  <span class="fu">plot_interaction</span>(<span class="at">dat_encuesta =</span> encuesta_sta,</span>
+<span id="cb51-4"><a href="validacion_encuestas.html#cb51-4" tabindex="-1"></a>                   <span class="at">by =</span> <span class="st">&quot;nivel_edu&quot;</span>,</span>
+<span id="cb51-5"><a href="validacion_encuestas.html#cb51-5" tabindex="-1"></a>                   <span class="at">by2 =</span> <span class="st">&quot;edad&quot;</span>) <span class="sc">+</span></span>
+<span id="cb51-6"><a href="validacion_encuestas.html#cb51-6" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">colour =</span> <span class="st">&quot;nivel_edu&quot;</span>)</span></code></pre></div>
+</div>
+<div id="interacción-estado-x-edad" class="section level4 unnumbered hasAnchor">
+<h4>Interacción Estado x Edad<a href="validacion_encuestas.html#interacción-estado-x-edad" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Se investiga la interacción entre el <strong>estado</strong> y la <strong>edad</strong> en cuanto a la pobreza. El gráfico <code>p_depto_edad</code> muestra la relación entre estos factores y se ajusta el tema para que la leyenda esté en la parte inferior.</p>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="validacion_encuestas.html#cb52-1" tabindex="-1"></a><span class="do">#### State x AGE </span><span class="al">###</span></span>
+<span id="cb52-2"><a href="validacion_encuestas.html#cb52-2" tabindex="-1"></a>p_depto_edad <span class="ot">&lt;-</span></span>
+<span id="cb52-3"><a href="validacion_encuestas.html#cb52-3" tabindex="-1"></a>  <span class="fu">plot_interaction</span>(<span class="at">dat_encuesta =</span> encuesta_sta,</span>
+<span id="cb52-4"><a href="validacion_encuestas.html#cb52-4" tabindex="-1"></a>                   <span class="at">by =</span> <span class="st">&quot;edad&quot;</span>,</span>
+<span id="cb52-5"><a href="validacion_encuestas.html#cb52-5" tabindex="-1"></a>                   <span class="at">by2 =</span> <span class="st">&quot;ent&quot;</span>) <span class="sc">+</span></span>
+<span id="cb52-6"><a href="validacion_encuestas.html#cb52-6" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">colour =</span> <span class="st">&quot;Edad&quot;</span>)</span>
+<span id="cb52-7"><a href="validacion_encuestas.html#cb52-7" tabindex="-1"></a></span>
+<span id="cb52-8"><a href="validacion_encuestas.html#cb52-8" tabindex="-1"></a>p_escolar_edad <span class="sc">/</span> p_depto_edad</span></code></pre></div>
+</div>
+<div id="interacción-nivel-educativo-x-estado" class="section level4 unnumbered hasAnchor">
+<h4>Interacción Nivel Educativo x Estado<a href="validacion_encuestas.html#interacción-nivel-educativo-x-estado" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Se examina la relación entre el <strong>nivel educativo</strong> y el <strong>estado</strong> en términos de pobreza. El gráfico <code>p_depto_escolar</code> proporciona una visión de cómo el nivel educativo varía entre diferentes estados.</p>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="validacion_encuestas.html#cb53-1" tabindex="-1"></a><span class="do">#### Level of schooling (LoS) x State </span><span class="al">###</span></span>
+<span id="cb53-2"><a href="validacion_encuestas.html#cb53-2" tabindex="-1"></a>p_depto_escolar <span class="ot">&lt;-</span></span>
+<span id="cb53-3"><a href="validacion_encuestas.html#cb53-3" tabindex="-1"></a>  <span class="fu">plot_interaction</span>(<span class="at">dat_encuesta =</span> encuesta_sta,</span>
+<span id="cb53-4"><a href="validacion_encuestas.html#cb53-4" tabindex="-1"></a>                   <span class="at">by =</span> <span class="st">&quot;nivel_edu&quot;</span>,</span>
+<span id="cb53-5"><a href="validacion_encuestas.html#cb53-5" tabindex="-1"></a>                   <span class="at">by2 =</span> <span class="st">&quot;ent&quot;</span>) <span class="sc">+</span></span>
+<span id="cb53-6"><a href="validacion_encuestas.html#cb53-6" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">colour =</span> <span class="st">&quot;nivel_edu&quot;</span>)</span>
+<span id="cb53-7"><a href="validacion_encuestas.html#cb53-7" tabindex="-1"></a></span>
+<span id="cb53-8"><a href="validacion_encuestas.html#cb53-8" tabindex="-1"></a>p_depto_escolar</span></code></pre></div>
+</div>
+<div id="repetición-del-análisis-para-ic_segsoc-e-ic_ali_nc" class="section level4 unnumbered hasAnchor">
+<h4>Repetición del Análisis para ic_segsoc e ic_ali_nc<a href="validacion_encuestas.html#repetición-del-análisis-para-ic_segsoc-e-ic_ali_nc" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Para realizar un análisis detallado de diferentes carencias, se repite el procedimiento de interacción para cada indicador específico. Este enfoque permite comparar cómo las interacciones entre variables afectan distintos aspectos de la pobreza. A continuación se presenta la descripción del análisis:</p>
+<p><strong>Interacción Edad x Sexo:</strong>
+Se analiza la interacción entre <strong>edad</strong> y <strong>sexo</strong> en relación con el indicador de pobreza <code>ic_segsoc</code>. El gráfico <code>p_sex_age</code> muestra cómo varía la pobreza, medida por <code>ic_segsoc</code>, en función de la combinación de edad y sexo.</p>
+<p><strong>Interacción Nivel Educativo x Sexo:</strong>
+Se examina cómo el <strong>nivel educativo</strong> interactúa con el <strong>sexo</strong> en relación con el indicador <code>ic_segsoc</code>. El gráfico <code>p_sex_escolar</code> proporciona una visión de la pobreza según el nivel educativo entre diferentes géneros.</p>
+<p><strong>Interacción Estado x Sexo:</strong>
+El gráfico <code>p_sex_depto</code> muestra la pobreza medida por <code>ic_segsoc</code> en función del <strong>estado</strong> y el <strong>sexo</strong>, ayudando a entender cómo varía la pobreza entre diferentes estados y géneros.</p>
+<p><strong>Combinación de Gráficos de Interacción:</strong>
+Se combinan los gráficos de interacción de <strong>Edad x Sexo</strong>, <strong>Nivel Educativo x Sexo</strong>, y <strong>Estado x Sexo</strong> usando <code>patchwork</code>, para una visualización consolidada de cómo estas combinaciones afectan el indicador <code>ic_segsoc</code>.</p>
+<p><strong>Interacción Nivel Educativo x Edad:</strong>
+El gráfico <code>p_escolar_edad</code> muestra cómo el <strong>nivel educativo</strong> y la <strong>edad</strong> interactúan en relación con el indicador <code>ic_segsoc</code>. Se ajusta la leyenda para que esté en la parte inferior, facilitando la interpretación.</p>
+<p><strong>Interacción Estado x Edad:</strong>
+Se explora la relación entre <strong>edad</strong> y <strong>estado</strong> en función del indicador <code>ic_segsoc</code>. El gráfico <code>p_depto_edad</code> ilustra cómo varía la pobreza entre diferentes edades y estados.</p>
+<p><strong>Interacción Nivel Educativo x Estado:</strong>
+Finalmente, el gráfico <code>p_depto_escolar</code> muestra cómo el <strong>nivel educativo</strong> y el <strong>estado</strong> interactúan en relación con <code>ic_segsoc</code>, proporcionando una visión de la pobreza según el nivel educativo en distintos estados.</p>
+</div>
+<div id="resultados-para-ic_segsoc" class="section level4 unnumbered hasAnchor">
+<h4>Resultados para ic_segsoc<a href="validacion_encuestas.html#resultados-para-ic_segsoc" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="validacion_encuestas.html#cb54-1" tabindex="-1"></a><span class="do">#### AGE x SEX </span><span class="al">###</span></span>
+<span id="cb54-2"><a href="validacion_encuestas.html#cb54-2" tabindex="-1"></a>encuesta_sta<span class="sc">$</span>pobreza <span class="ot">&lt;-</span> encuesta_sta<span class="sc">$</span>ic_segsoc</span>
+<span id="cb54-3"><a href="validacion_encuestas.html#cb54-3" tabindex="-1"></a><span class="co">#--- Percentage of people in poverty by AGE x SEX ---#</span></span>
+<span id="cb54-4"><a href="validacion_encuestas.html#cb54-4" tabindex="-1"></a>p_sex_age <span class="ot">&lt;-</span></span>
+<span id="cb54-5"><a href="validacion_encuestas.html#cb54-5" tabindex="-1"></a>  <span class="fu">plot_interaction</span>(<span class="at">dat_encuesta =</span> encuesta_sta,</span>
+<span id="cb54-6"><a href="validacion_encuestas.html#cb54-6" tabindex="-1"></a>                   <span class="at">by =</span> <span class="st">&quot;sexo&quot;</span>,</span>
+<span id="cb54-7"><a href="validacion_encuestas.html#cb54-7" tabindex="-1"></a>                   <span class="at">by2 =</span> <span class="st">&quot;edad&quot;</span>)</span>
+<span id="cb54-8"><a href="validacion_encuestas.html#cb54-8" tabindex="-1"></a></span>
+<span id="cb54-9"><a href="validacion_encuestas.html#cb54-9" tabindex="-1"></a><span class="do">#### Level of schooling (LoS) x SEX </span><span class="al">###</span></span>
+<span id="cb54-10"><a href="validacion_encuestas.html#cb54-10" tabindex="-1"></a>p_sex_escolar <span class="ot">&lt;-</span></span>
+<span id="cb54-11"><a href="validacion_encuestas.html#cb54-11" tabindex="-1"></a>  <span class="fu">plot_interaction</span>(<span class="at">dat_encuesta =</span> encuesta_sta,</span>
+<span id="cb54-12"><a href="validacion_encuestas.html#cb54-12" tabindex="-1"></a>                   <span class="at">by =</span> <span class="st">&quot;sexo&quot;</span>,</span>
+<span id="cb54-13"><a href="validacion_encuestas.html#cb54-13" tabindex="-1"></a>                   <span class="at">by2 =</span> <span class="st">&quot;nivel_edu&quot;</span>)</span>
+<span id="cb54-14"><a href="validacion_encuestas.html#cb54-14" tabindex="-1"></a></span>
+<span id="cb54-15"><a href="validacion_encuestas.html#cb54-15" tabindex="-1"></a><span class="do">#### State x SEX </span><span class="al">###</span></span>
+<span id="cb54-16"><a href="validacion_encuestas.html#cb54-16" tabindex="-1"></a>p_sex_depto <span class="ot">&lt;-</span></span>
+<span id="cb54-17"><a href="validacion_encuestas.html#cb54-17" tabindex="-1"></a>  <span class="fu">plot_interaction</span>(<span class="at">dat_encuesta =</span> encuesta_sta,</span>
+<span id="cb54-18"><a href="validacion_encuestas.html#cb54-18" tabindex="-1"></a>                   <span class="at">by =</span> <span class="st">&quot;sexo&quot;</span>,</span>
+<span id="cb54-19"><a href="validacion_encuestas.html#cb54-19" tabindex="-1"></a>                   <span class="at">by2 =</span> <span class="st">&quot;ent&quot;</span>)</span>
+<span id="cb54-20"><a href="validacion_encuestas.html#cb54-20" tabindex="-1"></a></span>
+<span id="cb54-21"><a href="validacion_encuestas.html#cb54-21" tabindex="-1"></a><span class="co">#--- Patchwork in action ---#</span></span>
+<span id="cb54-22"><a href="validacion_encuestas.html#cb54-22" tabindex="-1"></a>(p_sex_age <span class="sc">+</span> p_sex_escolar) <span class="sc">/</span> p_sex_depto</span>
+<span id="cb54-23"><a href="validacion_encuestas.html#cb54-23" tabindex="-1"></a></span>
+<span id="cb54-24"><a href="validacion_encuestas.html#cb54-24" tabindex="-1"></a><span class="do">#### Level of schooling (LoS) x AGE </span><span class="al">###</span></span>
+<span id="cb54-25"><a href="validacion_encuestas.html#cb54-25" tabindex="-1"></a>p_escolar_edad <span class="ot">&lt;-</span></span>
+<span id="cb54-26"><a href="validacion_encuestas.html#cb54-26" tabindex="-1"></a>  <span class="fu">plot_interaction</span>(<span class="at">dat_encuesta =</span> encuesta_sta,</span>
+<span id="cb54-27"><a href="validacion_encuestas.html#cb54-27" tabindex="-1"></a>                   <span class="at">by =</span> <span class="st">&quot;nivel_edu&quot;</span>,</span>
+<span id="cb54-28"><a href="validacion_encuestas.html#cb54-28" tabindex="-1"></a>                   <span class="at">by2 =</span> <span class="st">&quot;edad&quot;</span>) <span class="sc">+</span></span>
+<span id="cb54-29"><a href="validacion_encuestas.html#cb54-29" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">colour =</span> <span class="st">&quot;nivel_edu&quot;</span>)</span>
+<span id="cb54-30"><a href="validacion_encuestas.html#cb54-30" tabindex="-1"></a></span>
+<span id="cb54-31"><a href="validacion_encuestas.html#cb54-31" tabindex="-1"></a><span class="do">#### State x AGE </span><span class="al">###</span></span>
+<span id="cb54-32"><a href="validacion_encuestas.html#cb54-32" tabindex="-1"></a>p_depto_edad <span class="ot">&lt;-</span></span>
+<span id="cb54-33"><a href="validacion_encuestas.html#cb54-33" tabindex="-1"></a>  <span class="fu">plot_interaction</span>(<span class="at">dat_encuesta =</span> encuesta_sta,</span>
+<span id="cb54-34"><a href="validacion_encuestas.html#cb54-34" tabindex="-1"></a>                   <span class="at">by =</span> <span class="st">&quot;edad&quot;</span>,</span>
+<span id="cb54-35"><a href="validacion_encuestas.html#cb54-35" tabindex="-1"></a>                   <span class="at">by2 =</span> <span class="st">&quot;ent&quot;</span>) <span class="sc">+</span></span>
+<span id="cb54-36"><a href="validacion_encuestas.html#cb54-36" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">colour =</span> <span class="st">&quot;Edad&quot;</span>)</span>
+<span id="cb54-37"><a href="validacion_encuestas.html#cb54-37" tabindex="-1"></a></span>
+<span id="cb54-38"><a href="validacion_encuestas.html#cb54-38" tabindex="-1"></a>p_escolar_edad <span class="sc">/</span> p_depto_edad</span>
+<span id="cb54-39"><a href="validacion_encuestas.html#cb54-39" tabindex="-1"></a></span>
+<span id="cb54-40"><a href="validacion_encuestas.html#cb54-40" tabindex="-1"></a><span class="do">#### Level of schooling (LoS) x State </span><span class="al">###</span></span>
+<span id="cb54-41"><a href="validacion_encuestas.html#cb54-41" tabindex="-1"></a>p_depto_escolar <span class="ot">&lt;-</span></span>
+<span id="cb54-42"><a href="validacion_encuestas.html#cb54-42" tabindex="-1"></a>  <span class="fu">plot_interaction</span>(<span class="at">dat_encuesta =</span> encuesta_sta,</span>
+<span id="cb54-43"><a href="validacion_encuestas.html#cb54-43" tabindex="-1"></a>                   <span class="at">by =</span> <span class="st">&quot;nivel_edu&quot;</span>,</span>
+<span id="cb54-44"><a href="validacion_encuestas.html#cb54-44" tabindex="-1"></a>                   <span class="at">by2 =</span> <span class="st">&quot;ent&quot;</span>) <span class="sc">+</span></span>
+<span id="cb54-45"><a href="validacion_encuestas.html#cb54-45" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">colour =</span> <span class="st">&quot;nivel_edu&quot;</span>)</span>
+<span id="cb54-46"><a href="validacion_encuestas.html#cb54-46" tabindex="-1"></a></span>
+<span id="cb54-47"><a href="validacion_encuestas.html#cb54-47" tabindex="-1"></a>p_depto_escolar</span></code></pre></div>
+</div>
+<div id="resultados-para-ic_ali_nc" class="section level4 unnumbered hasAnchor">
+<h4>Resultados para ic_ali_nc<a href="validacion_encuestas.html#resultados-para-ic_ali_nc" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="validacion_encuestas.html#cb55-1" tabindex="-1"></a><span class="do">#### AGE x SEX </span><span class="al">###</span></span>
+<span id="cb55-2"><a href="validacion_encuestas.html#cb55-2" tabindex="-1"></a>encuesta_sta<span class="sc">$</span>pobreza <span class="ot">&lt;-</span> encuesta_sta<span class="sc">$</span>ic_ali_nc</span>
+<span id="cb55-3"><a href="validacion_encuestas.html#cb55-3" tabindex="-1"></a><span class="co">#--- Percentage of people in poverty by AGE x SEX ---#</span></span>
+<span id="cb55-4"><a href="validacion_encuestas.html#cb55-4" tabindex="-1"></a>p_sex_age <span class="ot">&lt;-</span></span>
+<span id="cb55-5"><a href="validacion_encuestas.html#cb55-5" tabindex="-1"></a>  <span class="fu">plot_interaction</span>(<span class="at">dat_encuesta =</span> encuesta_sta,</span>
+<span id="cb55-6"><a href="validacion_encuestas.html#cb55-6" tabindex="-1"></a>                   <span class="at">by =</span> <span class="st">&quot;sexo&quot;</span>,</span>
+<span id="cb55-7"><a href="validacion_encuestas.html#cb55-7" tabindex="-1"></a>                   <span class="at">by2 =</span> <span class="st">&quot;edad&quot;</span>)</span>
+<span id="cb55-8"><a href="validacion_encuestas.html#cb55-8" tabindex="-1"></a></span>
+<span id="cb55-9"><a href="validacion_encuestas.html#cb55-9" tabindex="-1"></a><span class="do">#### Level of schooling (LoS) x SEX </span><span class="al">###</span></span>
+<span id="cb55-10"><a href="validacion_encuestas.html#cb55-10" tabindex="-1"></a>p_sex_escolar <span class="ot">&lt;-</span></span>
+<span id="cb55-11"><a href="validacion_encuestas.html#cb55-11" tabindex="-1"></a>  <span class="fu">plot_interaction</span>(<span class="at">dat_encuesta =</span> encuesta_sta,</span>
+<span id="cb55-12"><a href="validacion_encuestas.html#cb55-12" tabindex="-1"></a>                   <span class="at">by =</span> <span class="st">&quot;sexo&quot;</span>,</span>
+<span id="cb55-13"><a href="validacion_encuestas.html#cb55-13" tabindex="-1"></a>                   <span class="at">by2 =</span> <span class="st">&quot;nivel_edu&quot;</span>)</span>
+<span id="cb55-14"><a href="validacion_encuestas.html#cb55-14" tabindex="-1"></a></span>
+<span id="cb55-15"><a href="validacion_encuestas.html#cb55-15" tabindex="-1"></a><span class="do">#### State x SEX </span><span class="al">###</span></span>
+<span id="cb55-16"><a href="validacion_encuestas.html#cb55-16" tabindex="-1"></a>p_sex_depto <span class="ot">&lt;-</span></span>
+<span id="cb55-17"><a href="validacion_encuestas.html#cb55-17" tabindex="-1"></a>  <span class="fu">plot_interaction</span>(<span class="at">dat_encuesta =</span> encuesta_sta,</span>
+<span id="cb55-18"><a href="validacion_encuestas.html#cb55-18" tabindex="-1"></a>                   <span class="at">by =</span> <span class="st">&quot;sexo&quot;</span>,</span>
+<span id="cb55-19"><a href="validacion_encuestas.html#cb55-19" tabindex="-1"></a>                   <span class="at">by2 =</span> <span class="st">&quot;ent&quot;</span>)</span>
+<span id="cb55-20"><a href="validacion_encuestas.html#cb55-20" tabindex="-1"></a></span>
+<span id="cb55-21"><a href="validacion_encuestas.html#cb55-21" tabindex="-1"></a><span class="co">#--- Patchwork in action ---#</span></span>
+<span id="cb55-22"><a href="validacion_encuestas.html#cb55-22" tabindex="-1"></a>(p_sex_age <span class="sc">+</span> p_sex_escolar) <span class="sc">/</span> p_sex_depto</span>
+<span id="cb55-23"><a href="validacion_encuestas.html#cb55-23" tabindex="-1"></a></span>
+<span id="cb55-24"><a href="validacion_encuestas.html#cb55-24" tabindex="-1"></a><span class="do">#### Level of schooling (LoS) x AGE </span><span class="al">###</span></span>
+<span id="cb55-25"><a href="validacion_encuestas.html#cb55-25" tabindex="-1"></a>p_escolar_edad <span class="ot">&lt;-</span></span>
+<span id="cb55-26"><a href="validacion_encuestas.html#cb55-26" tabindex="-1"></a>  <span class="fu">plot_interaction</span>(<span class="at">dat_encuesta =</span> encuesta_sta,</span>
+<span id="cb55-27"><a href="validacion_encuestas.html#cb55-27" tabindex="-1"></a>                   <span class="at">by =</span> <span class="st">&quot;nivel_edu&quot;</span>,</span>
+<span id="cb55-28"><a href="validacion_encuestas.html#cb55-28" tabindex="-1"></a>                   <span class="at">by2 =</span> <span class="st">&quot;edad&quot;</span>) <span class="sc">+</span></span>
+<span id="cb55-29"><a href="validacion_encuestas.html#cb55-29" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">colour =</span> <span class="st">&quot;nivel_edu&quot;</span>)</span>
+<span id="cb55-30"><a href="validacion_encuestas.html#cb55-30" tabindex="-1"></a></span>
+<span id="cb55-31"><a href="validacion_encuestas.html#cb55-31" tabindex="-1"></a><span class="do">#### State x AGE </span><span class="al">###</span></span>
+<span id="cb55-32"><a href="validacion_encuestas.html#cb55-32" tabindex="-1"></a>p_depto_edad <span class="ot">&lt;-</span></span>
+<span id="cb55-33"><a href="validacion_encuestas.html#cb55-33" tabindex="-1"></a>  <span class="fu">plot_interaction</span>(<span class="at">dat_encuesta =</span> encuesta_sta,</span>
+<span id="cb55-34"><a href="validacion_encuestas.html#cb55-34" tabindex="-1"></a>                   <span class="at">by =</span> <span class="st">&quot;edad&quot;</span>,</span>
+<span id="cb55-35"><a href="validacion_encuestas.html#cb55-35" tabindex="-1"></a>                   <span class="at">by2 =</span> <span class="st">&quot;ent&quot;</span>) <span class="sc">+</span></span>
+<span id="cb55-36"><a href="validacion_encuestas.html#cb55-36" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">colour =</span> <span class="st">&quot;Edad&quot;</span>)</span>
+<span id="cb55-37"><a href="validacion_encuestas.html#cb55-37" tabindex="-1"></a></span>
+<span id="cb55-38"><a href="validacion_encuestas.html#cb55-38" tabindex="-1"></a>p_escolar_edad <span class="sc">/</span> p_depto_edad</span>
+<span id="cb55-39"><a href="validacion_encuestas.html#cb55-39" tabindex="-1"></a></span>
+<span id="cb55-40"><a href="validacion_encuestas.html#cb55-40" tabindex="-1"></a><span class="do">#### Level of schooling (LoS) x State </span><span class="al">###</span></span>
+<span id="cb55-41"><a href="validacion_encuestas.html#cb55-41" tabindex="-1"></a>p_depto_escolar <span class="ot">&lt;-</span></span>
+<span id="cb55-42"><a href="validacion_encuestas.html#cb55-42" tabindex="-1"></a>  <span class="fu">plot_interaction</span>(<span class="at">dat_encuesta =</span> encuesta_sta,</span>
+<span id="cb55-43"><a href="validacion_encuestas.html#cb55-43" tabindex="-1"></a>                   <span class="at">by =</span> <span class="st">&quot;nivel_edu&quot;</span>,</span>
+<span id="cb55-44"><a href="validacion_encuestas.html#cb55-44" tabindex="-1"></a>                   <span class="at">by2 =</span> <span class="st">&quot;ent&quot;</span>) <span class="sc">+</span></span>
+<span id="cb55-45"><a href="validacion_encuestas.html#cb55-45" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">colour =</span> <span class="st">&quot;nivel_edu&quot;</span>)</span>
+<span id="cb55-46"><a href="validacion_encuestas.html#cb55-46" tabindex="-1"></a></span>
+<span id="cb55-47"><a href="validacion_encuestas.html#cb55-47" tabindex="-1"></a>p_depto_escolar</span></code></pre></div>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="armonizar_encuesta.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="modelo_unidad_ictpc.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": true,
+"facebook": false,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/psirusteam/2023MEXsae/05_Validacion_encuestas.qmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["Manual de procesamiento del indicador de pobreza multidimensional mediante el uso de estimación de áreas pequeñas para México 2020.pdf", "Manual de procesamiento del indicador de pobreza multidimensional mediante el uso de estimación de áreas pequeñas para México 2020.epub", "Manual de procesamiento del indicador de pobreza multidimensional mediante el uso de estimación de áreas pequeñas para México 2020.mobi"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "section"
+},
+"tconfig": null
+});
+});
+</script>
+
+</body>
+
+</html>
